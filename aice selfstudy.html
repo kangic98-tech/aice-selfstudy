@@ -1,0 +1,1027 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AICE 독학 키트</title>
+<style>
+:root{--bg:#f6f7f9;--panel:#fff;--ink:#1d2330;--muted:#5d6577;--line:#e2e5eb;--accent:#2f5bea;--accent-soft:#e8eefe;--ok:#16794a;--ok-soft:#e3f4ea;--bad:#b42318;--bad-soft:#fdecea;--warn:#8a5a00;--warn-soft:#fff4dc;--code:#f2f4f7;}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#14171d;--panel:#1c2028;--ink:#e6e8ee;--muted:#9aa2b2;--line:#2c313c;--accent:#7d9bff;--accent-soft:#232c45;--ok:#5cc98d;--ok-soft:#18301f;--bad:#ff8a80;--bad-soft:#3a1e1c;--warn:#f0c060;--warn-soft:#34290f;--code:#151820;}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.6 "Pretendard","Malgun Gothic",system-ui,sans-serif}
+header{position:sticky;top:0;z-index:5;background:var(--panel);border-bottom:1px solid var(--line);padding:10px 16px;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+header h1{font-size:17px;margin:0;font-weight:700}
+header .sub{color:var(--muted);font-size:12px}
+nav{display:flex;gap:4px;flex-wrap:wrap;margin-left:auto}
+nav button,.btn{border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:8px;padding:6px 12px;font:inherit;font-size:14px;cursor:pointer}
+nav button.on{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn:disabled{opacity:.5;cursor:default}
+main{max-width:1180px;margin:0 auto;padding:16px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin-bottom:14px}
+.card h2{font-size:17px;margin:0 0 8px}
+.card h3{font-size:15px;margin:14px 0 6px}
+.muted{color:var(--muted)}
+.small{font-size:13px}
+code,pre,textarea{font-family:"D2Coding","Consolas",ui-monospace,monospace}
+code{background:var(--code);padding:1px 5px;border-radius:4px;font-size:13px}
+pre{background:var(--code);padding:10px 12px;border-radius:8px;overflow:auto;font-size:13px;margin:6px 0;white-space:pre}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{border-bottom:1px solid var(--line);padding:6px 8px;text-align:left;vertical-align:top}
+th{color:var(--muted);font-weight:600}
+.status{font-size:13px;padding:4px 10px;border-radius:999px;background:var(--warn-soft);color:var(--warn)}
+.status.ready{background:var(--ok-soft);color:var(--ok)}
+.status.err{background:var(--bad-soft);color:var(--bad)}
+/* 모의고사 */
+.exam{display:grid;grid-template-columns:220px 1fr;gap:14px}
+.qlist{display:flex;flex-direction:column;gap:2px}
+.qlist .sec{font-size:12px;color:var(--muted);margin:8px 0 2px}
+.qlist button{display:flex;gap:8px;align-items:center;text-align:left;border:0;background:none;color:var(--ink);padding:5px 8px;border-radius:6px;font:inherit;font-size:14px;cursor:pointer}
+.qlist button.on{background:var(--accent-soft)}
+.dot{width:10px;height:10px;border-radius:50%;border:2px solid var(--line);flex:none}
+.dot.run{border-color:var(--accent)}
+.dot.ok{background:var(--ok);border-color:var(--ok)}
+.dot.bad{background:var(--bad);border-color:var(--bad)}
+.tag{display:inline-block;font-size:12px;padding:1px 8px;border-radius:999px;background:var(--accent-soft);color:var(--accent);margin-right:6px}
+textarea.editor{width:100%;min-height:240px;resize:vertical;background:var(--code);color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:10px 12px;font-size:14px;line-height:1.5;tab-size:4}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:8px 0}
+.out img{max-width:100%;background:#fff;border-radius:6px;margin:6px 0;display:block}
+.err{color:var(--bad);background:var(--bad-soft);padding:8px 10px;border-radius:8px;font-size:13px;white-space:pre-wrap}
+.note{background:var(--warn-soft);color:var(--warn);padding:8px 10px;border-radius:8px;font-size:13px}
+.verdict{padding:10px 12px;border-radius:8px;margin:8px 0}
+.verdict.ok{background:var(--ok-soft);color:var(--ok)}
+.verdict.bad{background:var(--bad-soft);color:var(--bad)}
+.verdict table{color:var(--ink);margin-top:6px}
+details summary{cursor:pointer;color:var(--accent);font-size:14px}
+.score{font-size:34px;font-weight:700}
+.bar{height:8px;background:var(--line);border-radius:4px;overflow:hidden}
+.bar>i{display:block;height:100%;background:var(--accent)}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px}
+.check{display:flex;gap:8px;align-items:flex-start;padding:3px 0}
+.check input{margin-top:5px}
+.quiz-opt{display:block;width:100%;text-align:left;margin:4px 0;border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:8px;padding:8px 10px;font:inherit;cursor:pointer}
+.quiz-opt.ok{border-color:var(--ok);background:var(--ok-soft)}
+.quiz-opt.bad{border-color:var(--bad);background:var(--bad-soft)}
+.hidden{display:none!important}
+@media (max-width:760px){.exam{grid-template-columns:1fr}.qlist{flex-direction:row;flex-wrap:wrap}.qlist .sec{width:100%}nav{margin-left:0}}
+</style>
+</head>
+<body>
+<header>
+  <div><h1>AICE Associate 독학 키트</h1><div class="sub">비공식 학습 도구 · 문항과 데이터는 자체 제작(샘플문항 비복제)</div></div>
+  <span id="pystatus" class="status">Python 엔진 준비 전</span>
+  <nav id="tabs">
+    <button data-tab="plan" class="on">학습 계획</button>
+    <button data-tab="concept">핵심 개념</button>
+    <button data-tab="quiz">API 퀴즈</button>
+    <button data-tab="exam">모의고사</button>
+  </nav>
+</header>
+
+<main>
+<!-- ============================== 학습 계획 ============================== -->
+<section id="tab-plan">
+  <div class="card">
+    <h2>시험 한눈에 보기 (샘플문항 기준)</h2>
+    <table>
+      <tr><th>영역</th><th>배점</th><th>문항</th><th>내용</th></tr>
+      <tr><td>데이터 분석</td><td>20점</td><td>1~4</td><td>import, read_csv, seaborn 시각화</td></tr>
+      <tr><td>데이터 전처리</td><td>30점</td><td>5~9</td><td>이상치, 결측치, 원-핫 인코딩, 데이터 분리, 스케일링</td></tr>
+      <tr><td>AI 모델링</td><td>50점</td><td>10~14</td><td>ML 학습·튜닝, 변수중요도, 평가, 딥러닝, 학습 곡선</td></tr>
+    </table>
+    <p class="small muted">문항 유형은 ① 코드 작성 ② 빈칸 채우기(<code>답안3 = 'countplot'</code>처럼 문자열 저장) ③ 오류 정정 세 가지입니다. 앞 문항 결과 변수를 뒤 문항이 이어받으므로 <b>앞에서 꼬이면 뒤가 전부 흔들립니다.</b> 시험 시간·합격 기준·허용 사이트는 <a href="https://aice.study" target="_blank" rel="noopener">aice.study</a>에서 꼭 확인하세요.</p>
+  </div>
+  <div class="card">
+    <h2>4주 학습 계획 <span class="small muted" id="planpct"></span></h2>
+    <div class="bar"><i id="planbar" style="width:0"></i></div>
+    <div class="grid2" id="plan" style="margin-top:12px"></div>
+  </div>
+</section>
+
+<!-- ============================== 핵심 개념 ============================== -->
+<section id="tab-concept" class="hidden"></section>
+
+<!-- ============================== 퀴즈 ============================== -->
+<section id="tab-quiz" class="hidden">
+  <div class="card">
+    <h2>헷갈리는 API 퀴즈 <span class="small muted" id="quizscore"></span></h2>
+    <p class="small muted">오류 정정 문항이 노리는 함정만 모았습니다. 틀린 문제는 다시 섞어서 나옵니다.</p>
+    <div id="quizbox"></div>
+  </div>
+</section>
+
+<!-- ============================== 모의고사 ============================== -->
+<section id="tab-exam" class="hidden">
+  <div class="card">
+    <div class="row" style="margin:0">
+      <b>모의고사 1 · 통신사 고객 이탈 예측 (분류)</b>
+      <span class="small muted" id="timer"></span>
+      <span style="margin-left:auto"></span>
+      <label class="small"><input type="checkbox" id="exammode"> 시험 모드 (제출 전 채점 숨김)</label>
+      <button class="btn" id="btn-reset">처음부터 다시</button>
+      <button class="btn primary" id="btn-submit">최종 제출</button>
+    </div>
+    <details style="margin-top:8px"><summary>시나리오와 데이터(churn.csv) 설명</summary>
+      <p class="small">A 통신사는 해지할 가능성이 높은 고객을 미리 찾아 혜택을 주려 합니다. 고객 정보로 다음 달 해지 여부(<code>churn</code>: 1=해지, 0=유지)를 예측하는 모델을 만드세요. 데이터는 앱이 직접 생성한 합성 데이터(2,400행)입니다.</p>
+      <table class="small">
+        <tr><th>컬럼</th><th>설명</th><th>컬럼</th><th>설명</th></tr>
+        <tr><td>customer_id</td><td>고객 번호</td><td>tenure_months</td><td>가입 기간(개월)</td></tr>
+        <tr><td>gender</td><td>성별(M/F)</td><td>monthly_fee</td><td>월 요금(천 원)</td></tr>
+        <tr><td>age</td><td>나이(결측 있음)</td><td>data_gb</td><td>월 데이터 사용량(결측 있음)</td></tr>
+        <tr><td>region</td><td>지역</td><td>call_minutes</td><td>월 통화 시간(분)</td></tr>
+        <tr><td>plan</td><td>요금제(Basic/Standard/Premium, 일부 <code>|Promo</code> 붙음)</td><td>complaints</td><td>최근 3개월 불만 접수 건수</td></tr>
+        <tr><td>contract</td><td>약정(Monthly/1Year/2Year)</td><td>churn</td><td>해지 여부(타깃)</td></tr>
+      </table>
+    </details>
+  </div>
+  <div id="report" class="card hidden"></div>
+  <div class="exam">
+    <div class="card qlist" id="qlist"></div>
+    <div class="card" id="qview"></div>
+  </div>
+</section>
+</main>
+
+<!-- ============================== 문항 코드 (starter: 처음 주어지는 코드 / ref: 모범답안) ============================== -->
+<script type="text/plain" data-q="1" data-kind="starter">
+# pandas, numpy, seaborn을 각각 pd, np, sns 별칭으로 import하세요.
+# 여기에 답안코드를 작성하고 실행하세요.
+</script>
+<script type="text/plain" data-q="1" data-kind="ref">
+import pandas as pd
+import numpy as np
+import seaborn as sns
+</script>
+
+<script type="text/plain" data-q="2" data-kind="starter">
+# 여기에 답안코드를 작성하고 실행하세요.
+</script>
+<script type="text/plain" data-q="2" data-kind="ref">
+df = pd.read_csv('churn.csv')
+답안2 = df.shape[0]
+df.head()
+</script>
+
+<script type="text/plain" data-q="3" data-kind="starter">
+# 아래 코드의 빈칸을 채우고 실행하세요.
+import matplotlib.pyplot as plt
+
+sns.< blank3 >(data=df, x='contract', hue='churn')
+plt.show()
+
+답안3 = ''
+</script>
+<script type="text/plain" data-q="3" data-kind="ref">
+import matplotlib.pyplot as plt
+
+sns.countplot(data=df, x='contract', hue='churn')
+plt.show()
+
+답안3 = 'countplot'
+</script>
+
+<script type="text/plain" data-q="4" data-kind="starter">
+# 아래 코드의 빈칸을 채우고 실행하세요.
+fig, axes = plt.< blank4_1 >(nrows=1, ncols=2, figsize=(12, 4))
+
+sns.histplot(data=df, x='tenure_months', hue='churn', ax=axes[0])
+axes[0].< blank4_2 >('Tenure by churn')
+
+sns.boxplot(data=df, x='churn', y='monthly_fee', ax=axes[1])
+axes[1].set_title('Fee by churn')
+plt.show()
+
+답안4_1 = ''
+답안4_2 = ''
+</script>
+<script type="text/plain" data-q="4" data-kind="ref">
+fig, axes = plt.subplots(nrows=1, ncols=2, figsize=(12, 4))
+
+sns.histplot(data=df, x='tenure_months', hue='churn', ax=axes[0])
+axes[0].set_title('Tenure by churn')
+
+sns.boxplot(data=df, x='churn', y='monthly_fee', ax=axes[1])
+axes[1].set_title('Fee by churn')
+plt.show()
+
+답안4_1 = 'subplots'
+답안4_2 = 'set_title'
+</script>
+
+<script type="text/plain" data-q="5" data-kind="starter">
+# 여기에 답안코드를 작성하고 실행하세요.
+</script>
+<script type="text/plain" data-q="5" data-kind="ref">
+q1 = df['monthly_fee'].quantile(0.25)
+q3 = df['monthly_fee'].quantile(0.75)
+iqr = q3 - q1
+cond = (df['monthly_fee'] < q1 - 1.5 * iqr) | (df['monthly_fee'] > q3 + 1.5 * iqr)
+
+답안5 = int(cond.sum())
+df_temp = df[~cond].reset_index(drop=True)
+print(답안5, df_temp.shape)
+</script>
+
+<script type="text/plain" data-q="6" data-kind="starter">
+# 아래의 코드를 정정하고 실행하세요.
+df_na = df_temp.drop(['customer_id'], axis=0)
+print(df_na.isnull().sum())
+
+df_na = df_na.dropna()
+df_na.reset_index(drop=True, inplace=True)
+답안6 = len(df_na)
+</script>
+<script type="text/plain" data-q="6" data-kind="ref">
+df_na = df_temp.drop(['customer_id'], axis=1)
+print(df_na.isnull().sum())
+
+df_na = df_na.dropna()
+df_na.reset_index(drop=True, inplace=True)
+답안6 = len(df_na)
+</script>
+
+<script type="text/plain" data-q="7" data-kind="starter">
+# 여기에 답안코드를 작성하고 실행하세요.
+</script>
+<script type="text/plain" data-q="7" data-kind="ref">
+df_na.loc[df_na['plan'].isin(['Basic|Promo']), 'plan'] = 'Basic'
+df_na.loc[df_na['plan'].isin(['Standard|Promo']), 'plan'] = 'Standard'
+print(df_na['plan'].value_counts())
+
+df_preset = pd.get_dummies(df_na, columns=['plan', 'contract', 'region', 'gender'])
+답안7 = df_preset.shape[1]
+</script>
+
+<script type="text/plain" data-q="8" data-kind="starter">
+# 여기에 답안코드를 작성하고 실행하세요.
+</script>
+<script type="text/plain" data-q="8" data-kind="ref">
+from sklearn.model_selection import train_test_split
+
+X = df_preset.drop('churn', axis=1)
+y = df_preset['churn']
+X_train, X_valid, y_train, y_valid = train_test_split(
+    X, y, test_size=0.25, random_state=11, stratify=y)
+print(X_train.shape, X_valid.shape)
+</script>
+
+<script type="text/plain" data-q="9" data-kind="starter">
+# 아래의 코드를 정정하고 실행하세요.
+from sklearn.preprocessing import StandardScaler
+
+ss = StandardScaler()
+X_train = ss.fit_transform(X_train)
+X_valid = ss.fit_transform(X_valid)
+
+답안9 = round(float(X_valid[:, 0].mean()), 3)
+print(답안9)
+</script>
+<script type="text/plain" data-q="9" data-kind="ref">
+from sklearn.preprocessing import StandardScaler
+
+ss = StandardScaler()
+X_train = ss.fit_transform(X_train)
+X_valid = ss.transform(X_valid)
+
+답안9 = round(float(X_valid[:, 0].mean()), 3)
+print(답안9)
+</script>
+
+<script type="text/plain" data-q="10" data-kind="starter">
+# 여기에 답안코드를 작성하고 실행하세요. (브라우저에서는 n_jobs를 쓰지 마세요)
+</script>
+<script type="text/plain" data-q="10" data-kind="ref">
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import GridSearchCV
+
+rf = RandomForestClassifier(random_state=7)
+params = {'n_estimators': [30, 60], 'max_depth': [4, 8]}
+gs = GridSearchCV(rf, param_grid=params, cv=3, scoring='accuracy')
+gs.fit(X_train, y_train)
+print(gs.best_params_)
+</script>
+
+<script type="text/plain" data-q="11" data-kind="starter">
+# 아래의 코드를 정정하고 실행하세요.
+rf_best = gs.best_estimator_
+imp = pd.Series(rf_best.importances, index=X.columns)
+top5 = imp.sort_index(ascending=False)[:5]
+
+sns.barplot(x=top5.values, y=top5.index)
+plt.show()
+답안11 = top5.index[0]
+</script>
+<script type="text/plain" data-q="11" data-kind="ref">
+rf_best = gs.best_estimator_
+imp = pd.Series(rf_best.feature_importances_, index=X.columns)
+top5 = imp.sort_values(ascending=False)[:5]
+
+sns.barplot(x=top5.values, y=top5.index)
+plt.show()
+답안11 = top5.index[0]
+</script>
+
+<script type="text/plain" data-q="12" data-kind="starter">
+# 여기에 답안코드를 작성하고 실행하세요.
+</script>
+<script type="text/plain" data-q="12" data-kind="ref">
+from sklearn.metrics import accuracy_score
+
+y_pred = gs.best_estimator_.predict(X_valid)
+답안12 = round(accuracy_score(y_valid, y_pred), 4)
+print(답안12)
+</script>
+
+<script type="text/plain" data-q="13" data-kind="starter">
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense, Dropout
+from tensorflow.keras.callbacks import EarlyStopping
+
+# 여기에 답안코드를 작성하고 실행하세요.
+</script>
+<script type="text/plain" data-q="13" data-kind="ref">
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense, Dropout
+from tensorflow.keras.callbacks import EarlyStopping
+
+model = Sequential()
+model.add(Dense(64, activation='relu', input_dim=X_train.shape[1]))
+model.add(Dropout(0.2))
+model.add(Dense(32, activation='relu'))
+model.add(Dense(1, activation='sigmoid'))
+
+model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
+es = EarlyStopping(monitor='val_loss', patience=5)
+history = model.fit(X_train, y_train, epochs=50, batch_size=32,
+                    validation_data=(X_valid, y_valid), callbacks=[es])
+</script>
+
+<script type="text/plain" data-q="14" data-kind="starter">
+# 아래 코드의 빈칸을 채우고 실행하세요.
+plt.plot(history.< blank14_1 >['loss'])
+plt.plot(history.history['val_loss'])
+plt.title('Model Loss')
+plt.xlabel('Epoch')
+plt.ylabel('Loss')
+plt.< blank14_2 >(['train', 'valid'])
+plt.show()
+
+답안14_1 = ''
+답안14_2 = ''
+</script>
+<script type="text/plain" data-q="14" data-kind="ref">
+plt.plot(history.history['loss'])
+plt.plot(history.history['val_loss'])
+plt.title('Model Loss')
+plt.xlabel('Epoch')
+plt.ylabel('Loss')
+plt.legend(['train', 'valid'])
+plt.show()
+
+답안14_1 = 'history'
+답안14_2 = 'legend'
+</script>
+
+<!-- ============================== Python 코어 (aice_core.py를 build.py가 붙여 넣음) ============================== -->
+<script type="text/plain" id="py-core">
+# AICE Associate 독학 키트 - 브라우저(Pyodide)에서 실행되는 데이터 생성·실행·채점 코어
+# index.html이 이 파일 내용을 그대로 포함해 사용한다. (수정 후 build.py 실행)
+import ast, io, json, base64, math, warnings, traceback, contextlib
+import numpy as np
+import pandas as pd
+import matplotlib
+matplotlib.use("Agg")
+import matplotlib.pyplot as plt
+
+warnings.filterwarnings("ignore")
+
+
+# ---------------------------------------------------------------- 합성 데이터
+def make_churn(path="churn.csv", n=2400, seed=2026):
+    """통신사 고객 이탈(churn) 합성 데이터. 이상치·결측치·지저분한 범주값을 일부러 넣는다."""
+    rng = np.random.default_rng(seed)
+    plan = rng.choice(["Basic", "Standard", "Premium", "Basic|Promo", "Standard|Promo"],
+                      n, p=[0.28, 0.27, 0.2, 0.13, 0.12])
+    base_fee = pd.Series(plan).str.split("|").str[0].map({"Basic": 33, "Standard": 55, "Premium": 89}).to_numpy()
+    fee = base_fee + rng.normal(0, 6, n)
+    promo = np.char.find(plan.astype(str), "Promo") >= 0
+    fee = np.where(promo, fee * 0.85, fee)
+    out = rng.choice(n, 28, replace=False)
+    fee[out] = fee[out] * rng.uniform(3.0, 5.0, 28)          # 요금 이상치
+    contract = rng.choice(["Monthly", "1Year", "2Year"], n, p=[0.5, 0.3, 0.2])
+    tenure = rng.integers(1, 73, n)
+    age = rng.integers(19, 76, n).astype(float)
+    complaints = rng.poisson(0.7, n)
+    data_gb = np.round(rng.gamma(2.0, 9.0, n), 1)
+    calls = np.round(np.clip(rng.normal(280, 90, n), 0, None)).astype(int)
+    logit = (-1.1 + 1.4 * (contract == "Monthly") - 0.6 * (contract == "2Year")
+             - 0.035 * tenure + 0.65 * complaints + 0.018 * (base_fee - 55) - 0.4 * promo)
+    churn = (rng.random(n) < 1 / (1 + np.exp(-logit))).astype(int)
+    df = pd.DataFrame({
+        "customer_id": [f"C{i:05d}" for i in range(1, n + 1)],
+        "gender": rng.choice(["M", "F"], n),
+        "age": age,
+        "region": rng.choice(["Seoul", "Busan", "Daegu", "Gwangju", "Daejeon"], n),
+        "plan": plan,
+        "contract": contract,
+        "tenure_months": tenure,
+        "monthly_fee": np.round(fee, 1),
+        "data_gb": data_gb,
+        "call_minutes": calls,
+        "complaints": complaints,
+        "churn": churn,
+    })
+    df.loc[rng.choice(n, 37, replace=False), "data_gb"] = np.nan   # 결측치
+    df.loc[rng.choice(n, 22, replace=False), "age"] = np.nan
+    df.to_csv(path, index=False)
+    return df.shape
+
+
+# ---------------------------------------------------------------- 셀 실행
+class _History:
+    """딥러닝 학습 결과를 흉내 낸 객체 (14번 문항용, TensorFlow 없이 학습 곡선 실습)"""
+    def __init__(self):
+        e = np.arange(1, 24)
+        loss = 0.62 * np.exp(-e / 6) + 0.38
+        val = 0.6 * np.exp(-e / 7) + 0.40 + 0.0025 * np.clip(e - 12, 0, None) ** 1.5
+        self.history = {
+            "loss": list(np.round(loss, 4)), "val_loss": list(np.round(val, 4)),
+            "accuracy": list(np.round(1 - loss * 0.5, 4)), "val_accuracy": list(np.round(1 - val * 0.52, 4)),
+        }
+
+
+def _fig_payload():
+    imgs, info = [], []
+    for num in plt.get_fignums():
+        fig = plt.figure(num)
+        buf = io.BytesIO()
+        fig.savefig(buf, format="png", bbox_inches="tight", dpi=80)
+        imgs.append(base64.b64encode(buf.getvalue()).decode())
+        info.append([{"title": ax.get_title(), "xlabel": ax.get_xlabel(), "ylabel": ax.get_ylabel(),
+                      "lines": len(ax.get_lines()), "patches": len(ax.patches),
+                      "legend": ax.get_legend() is not None} for ax in fig.axes])
+    plt.close("all")
+    return imgs, info
+
+
+def _exec(code, ns):
+    """주피터 셀처럼 실행: 마지막 줄이 식이면 그 값을 출력한다."""
+    out = io.StringIO()
+    error, shown = None, None
+    plt.close("all")
+    try:
+        tree = ast.parse(code)
+        last = tree.body[-1] if tree.body and isinstance(tree.body[-1], ast.Expr) else None
+        if last is not None:
+            tree.body = tree.body[:-1]
+        with contextlib.redirect_stdout(out):
+            exec(compile(tree, "<cell>", "exec"), ns)
+            if last is not None:
+                val = eval(compile(ast.Expression(last.value), "<cell>", "eval"), ns)
+                if val is not None and not (hasattr(val, "__module__") and "matplotlib" in str(type(val))):
+                    shown = val.to_string(max_rows=12, max_cols=14) if isinstance(val, pd.DataFrame) else repr(val)
+    except Exception as e:
+        tb = traceback.extract_tb(e.__traceback__)
+        line = next((f.lineno for f in reversed(tb) if f.filename == "<cell>"), None)
+        if isinstance(e, SyntaxError):
+            line = e.lineno
+        error = f"{type(e).__name__}: {e}" + (f"  (셀 {line}번째 줄)" if line else "")
+    imgs, info = _fig_payload()
+    return {"stdout": out.getvalue(), "shown": shown, "error": error, "figs": imgs}, info
+
+
+# ---------------------------------------------------------------- 채점용 사실(facts) 추출
+def _mod(ns, name):
+    return getattr(ns.get(name), "__name__", None)
+
+
+def _blank(v):
+    return str(v).strip().strip("'\"").strip() if v is not None else None
+
+
+def _shape(ns, name):
+    v = ns.get(name)
+    return list(v.shape) if hasattr(v, "shape") else None
+
+
+def _calls(code):
+    names = []
+    for node in ast.walk(ast.parse(code)):
+        if isinstance(node, ast.Call):
+            args = [ast.unparse(a) for a in node.args]
+            names.append((ast.unparse(node.func), args))
+    return names
+
+
+def _lit(node):
+    try:
+        return ast.literal_eval(node)
+    except Exception:
+        return ast.unparse(node)
+
+
+def keras_facts(code):
+    tree = ast.parse(code)
+    calls = sorted((n for n in ast.walk(tree) if isinstance(n, ast.Call)), key=lambda n: (n.lineno, n.col_offset))
+    layers, f = [], {}
+    for c in calls:
+        fn = ast.unparse(c.func).split(".")[-1]
+        kw = {k.arg: _lit(k.value) for k in c.keywords if k.arg}
+        first = _lit(c.args[0]) if c.args else None
+        if fn == "Dense":
+            layers.append(f"Dense({first if first is not None else kw.get('units')}, {kw.get('activation')})")
+        elif fn == "Dropout":
+            layers.append(f"Dropout({first if first is not None else kw.get('rate')})")
+        elif fn == "compile":
+            f["compile: loss"] = kw.get("loss")
+            f["compile: optimizer"] = kw.get("optimizer")
+            f["compile: metrics"] = kw.get("metrics")
+        elif fn == "EarlyStopping":
+            f["EarlyStopping: monitor"] = kw.get("monitor")
+            f["EarlyStopping: patience"] = kw.get("patience")
+        elif fn == "fit":
+            f["fit: epochs"] = kw.get("epochs")
+            f["fit: batch_size"] = kw.get("batch_size")
+            f["fit: validation_data"] = ast.unparse(c.keywords[[k.arg for k in c.keywords].index("validation_data")].value).replace(" ", "") if "validation_data" in kw else None
+            f["fit: callbacks 사용"] = "callbacks" in kw
+    f["레이어 구성"] = " → ".join(layers)
+    f["fit 결과를 history에 저장"] = any(
+        isinstance(n, ast.Assign) and any(isinstance(t, ast.Name) and t.id == "history" for t in n.targets)
+        and isinstance(n.value, ast.Call) and ast.unparse(n.value.func).endswith(".fit")
+        for n in ast.walk(tree))
+    return f
+
+
+def facts(qid, ns, code, figs):
+    g = ns.get
+    if qid == 1:
+        return {"pd 별칭": _mod(ns, "pd"), "np 별칭": _mod(ns, "np"), "sns 별칭": _mod(ns, "sns")}
+    if qid == 2:
+        return {"df 크기": _shape(ns, "df"), "답안2": g("답안2")}
+    if qid == 3:
+        return {"답안3": _blank(g("답안3")), "그래프 개수": len(figs)}
+    if qid == 4:
+        axes = figs[0] if figs else []
+        return {"답안4_1": _blank(g("답안4_1")), "답안4_2": _blank(g("답안4_2")),
+                "서브플롯 개수": len(axes), "제목": [a["title"] for a in axes]}
+    if qid == 5:
+        d = g("df_temp")
+        return {"df_temp 크기": _shape(ns, "df_temp"), "답안5": g("답안5"),
+                "인덱스 재정렬(0부터 연속)": bool(d is not None and list(d.index[:3]) == [0, 1, 2] and d.index[-1] == len(d) - 1)}
+    if qid == 6:
+        d = g("df_na")
+        return {"df_na 크기": _shape(ns, "df_na"), "customer_id 삭제": d is not None and "customer_id" not in d.columns,
+                "결측치 0개": d is not None and int(d.isnull().sum().sum()) == 0, "답안6": g("답안6")}
+    if qid == 7:
+        d = g("df_preset")
+        return {"df_preset 크기": _shape(ns, "df_preset"),
+                "plan 관련 컬럼": sorted(c for c in d.columns if c.startswith("plan")) if d is not None else None,
+                "답안7": g("답안7")}
+    if qid == 8:
+        yt = g("y_train")
+        return {"X_train 크기": _shape(ns, "X_train"), "X_valid 크기": _shape(ns, "X_valid"),
+                "y_train 이탈 고객 수": int(yt.sum()) if yt is not None else None,
+                "X_train 첫 행 인덱스(분리 시드 확인)": [int(i) for i in g("X_train").index[:3]] if hasattr(g("X_train"), "index") else None}
+    if qid == 9:
+        bad = any(f.endswith("fit_transform") and a[:1] == ["X_valid"] for f, a in _calls(code))
+        return {"검증 데이터에 fit_transform 사용 안 함": not bad, "X_valid 크기": _shape(ns, "X_valid"), "답안9": g("답안9")}
+    if qid == 10:
+        gs = g("gs")
+        ok = gs is not None and hasattr(gs, "best_params_")
+        return {"모델 종류": type(gs.estimator).__name__ if gs is not None else None,
+                "random_state": gs.estimator.get_params().get("random_state") if gs is not None else None,
+                "cv": getattr(gs, "cv", None), "scoring": getattr(gs, "scoring", None),
+                "best_params_": dict(sorted(gs.best_params_.items())) if ok else "학습(fit) 안 됨"}
+    if qid == 11:
+        t = g("top5")
+        return {"top5 변수": [str(i) for i in t.index] if hasattr(t, "index") else None,
+                "답안11": _blank(g("답안11")), "그래프 개수": len(figs)}
+    if qid == 12:
+        return {"답안12": g("답안12")}
+    if qid == 13:
+        return keras_facts(code)
+    if qid == 14:
+        ax = figs[0][0] if figs and figs[0] else {}
+        return {"답안14_1": _blank(g("답안14_1")), "답안14_2": _blank(g("답안14_2")),
+                "그래프 제목": ax.get("title"), "선 개수": ax.get("lines"), "범례 표시": ax.get("legend")}
+    return {}
+
+
+def _jsonable(v):
+    if isinstance(v, (np.integer,)):
+        return int(v)
+    if isinstance(v, (np.floating,)):
+        return float(v)
+    if isinstance(v, (np.bool_,)):
+        return bool(v)
+    if isinstance(v, (list, tuple)):
+        return [_jsonable(x) for x in v]
+    if isinstance(v, dict):
+        return {str(k): _jsonable(x) for k, x in v.items()}
+    if v is None or isinstance(v, (int, float, str, bool)):
+        return v
+    return repr(v)
+
+
+def _same(a, b):
+    if isinstance(a, bool) or isinstance(b, bool):
+        return a == b
+    if isinstance(a, (int, float)) and isinstance(b, (int, float)):
+        return math.isclose(a, b, rel_tol=1e-4, abs_tol=1e-4)
+    if isinstance(a, list) and isinstance(b, list):
+        return len(a) == len(b) and all(_same(x, y) for x, y in zip(a, b))
+    if isinstance(a, dict) and isinstance(b, dict):
+        return a.keys() == b.keys() and all(_same(a[k], b[k]) for k in a)
+    return a == b
+
+
+# ---------------------------------------------------------------- 상태 관리 / JS용 API
+NO_EXEC = {13}           # TensorFlow 문항: 실행하지 않고 코드 구조만 채점
+USER, REF = {}, {}
+REF_FACTS = {}
+REF_CODES = {}
+
+
+def _new_ns(qid=None):
+    return {"__name__": "__main__"}
+
+
+def _prepare(ns, qid):
+    if qid == 14 and "history" not in ns:
+        ns["history"] = _History()
+
+
+def api_init(ref_codes_json):
+    global USER, REF, REF_FACTS, REF_CODES
+    make_churn()
+    REF_CODES = {int(k): v for k, v in json.loads(ref_codes_json).items()}
+    USER, REF, REF_FACTS = _new_ns(), _new_ns(), {}
+    return "ok"
+
+
+def _ensure_ref(qid):
+    for q in range(1, qid + 1):
+        if q in REF_FACTS:
+            continue
+        code = REF_CODES[q]
+        _prepare(REF, q)
+        figs = []
+        if q not in NO_EXEC:
+            res, figs = _exec(code, REF)
+            if res["error"]:
+                raise RuntimeError(f"모범답안 {q}번 실행 오류: {res['error']}")
+        REF_FACTS[q] = _jsonable(facts(q, REF, code, figs))
+
+
+def api_run(qid, code):
+    qid = int(qid)
+    _ensure_ref(qid)
+    _prepare(USER, qid)
+    if qid in NO_EXEC:
+        try:
+            ast.parse(code)
+            res = {"stdout": "", "shown": None, "figs": [], "error": None,
+                   "note": "브라우저에서는 TensorFlow를 실행할 수 없어 코드 구조(레이어·compile·EarlyStopping·fit 인자)만 채점합니다."}
+        except SyntaxError as e:
+            res = {"stdout": "", "shown": None, "figs": [], "error": f"SyntaxError: {e.msg} (셀 {e.lineno}번째 줄)"}
+        figs = []
+    else:
+        res, figs = _exec(code, USER)
+    try:
+        mine = _jsonable(facts(qid, USER, code, figs))
+    except Exception as e:
+        mine = {"채점 오류": f"{type(e).__name__}: {e}"}
+    ref = REF_FACTS[qid]
+    diffs = [{"key": k, "mine": mine.get(k), "expected": v} for k, v in ref.items() if not _same(mine.get(k), v)]
+    if res["error"]:
+        diffs.insert(0, {"key": "실행 오류", "mine": res["error"], "expected": "오류 없이 실행"})
+    res["correct"] = not diffs
+    res["diffs"] = diffs
+    return json.dumps(res, ensure_ascii=False)
+
+
+def api_sync(qid):
+    """앞 문항(1 ~ qid-1)의 모범답안을 실행한 상태로 사용자 변수 공간을 맞춘다."""
+    global USER
+    qid = int(qid)
+    USER = _new_ns()
+    for q in range(1, qid):
+        _prepare(USER, q)
+        if q not in NO_EXEC:
+            _exec(REF_CODES[q], USER)
+    return "ok"
+
+
+def api_reset():
+    global USER
+    USER = _new_ns()
+    return "ok"
+</script>
+
+<script src="https://cdn.jsdelivr.net/pyodide/v0.26.4/full/pyodide.js"></script>
+<script>
+// ------------------------------------------------------------------ 데이터
+const QUESTIONS = [
+  {id:1, sec:'데이터 분석', pts:5, type:'코드 작성', title:'라이브러리 import',
+   prompt:'pandas를 <code>pd</code>, numpy를 <code>np</code>, seaborn을 <code>sns</code>라는 별칭으로 import하세요.',
+   hints:['<code>import 라이브러리 as 별칭</code> 형식입니다.'],
+   expl:'별칭은 지시대로 정확히 써야 뒤 문항 코드가 동작합니다.'},
+  {id:2, sec:'데이터 분석', pts:5, type:'코드 작성', title:'데이터 읽기',
+   prompt:'<code>churn.csv</code>를 읽어 <code>df</code>에 저장하고 앞 5행을 확인하세요. 전체 행 수를 <code>답안2</code> 변수에 저장하세요.',
+   hints:['<code>pd.read_csv()</code>, <code>df.head()</code>', '행 수는 <code>df.shape[0]</code> 또는 <code>len(df)</code>'],
+   expl:'<code>shape</code>는 (행, 열) 튜플입니다.'},
+  {id:3, sec:'데이터 분석', pts:5, type:'빈칸', title:'범주별 개수 그래프',
+   prompt:'약정(<code>contract</code>) 종류별 고객 수를 해지 여부(<code>churn</code>)로 나눠 막대그래프로 그리려 합니다. 빈칸을 채워 실행하고, 빈칸에 들어갈 내용을 <code>답안3</code>에 문자열로 저장하세요.',
+   hints:['범주의 <b>개수(count)</b>를 세는 seaborn 함수입니다.'],
+   expl:'<code>countplot</code>은 y 없이 x 범주의 빈도를 그립니다. <code>hue</code>로 색을 나눕니다.'},
+  {id:4, sec:'데이터 분석', pts:5, type:'빈칸', title:'여러 그래프 한 번에',
+   prompt:'한 화면에 그래프 2개를 나란히 그리고 왼쪽 그래프에 제목을 붙이려 합니다. 빈칸을 채워 실행하고, 각 빈칸 내용을 <code>답안4_1</code>, <code>답안4_2</code>에 저장하세요.',
+   hints:['그림(fig)과 축 배열(axes)을 함께 돌려주는 함수입니다.', '축 객체에 제목을 붙이는 메서드는 <code>set_</code>으로 시작합니다.'],
+   expl:'<code>plt.subplots()</code> → <code>ax=axes[i]</code>로 위치 지정, 축 제목은 <code>ax.set_title()</code>. (<code>plt.title()</code>은 현재 축에만 적용)'},
+  {id:5, sec:'데이터 전처리', pts:6, type:'코드 작성', title:'이상치 제거 (IQR)',
+   prompt:'<code>monthly_fee</code>에서 IQR 방식으로 이상치를 찾아 제거하세요.<ul><li>Q1 = 25% 분위수, Q3 = 75% 분위수, IQR = Q3 − Q1</li><li>Q1 − 1.5×IQR 보다 작거나 Q3 + 1.5×IQR 보다 큰 행이 이상치</li><li>이상치를 뺀 결과를 인덱스를 0부터 다시 매겨 <code>df_temp</code>에 저장</li><li>제거된 행 수를 <code>답안5</code>에 저장</li></ul>',
+   hints:['<code>df[\'monthly_fee\'].quantile(0.25)</code>', '조건 두 개는 <code>|</code>로 묶고 각각 괄호로 감쌉니다.', '<code>reset_index(drop=True)</code>'],
+   expl:'불리언 조건 <code>cond</code>를 만든 뒤 <code>df[~cond]</code>로 남기거나 <code>df.drop(df[cond].index)</code>로 지웁니다. 인덱스 재정렬을 빼먹기 쉽습니다.'},
+  {id:6, sec:'데이터 전처리', pts:6, type:'오류 정정', title:'불필요 컬럼·결측치 처리',
+   prompt:'<code>df_temp</code>에서 <code>customer_id</code> 컬럼을 지우고 결측치가 있는 행을 삭제해 <code>df_na</code>를 만드는 코드입니다. 오류를 정정해 실행하세요.',
+   hints:['컬럼을 지울 때의 axis 값은?'],
+   expl:'<code>axis=0</code>은 행(인덱스), <code>axis=1</code>은 열입니다. <code>drop(columns=[...])</code>로 써도 됩니다.'},
+  {id:7, sec:'데이터 전처리', pts:6, type:'코드 작성', title:'범주 정리 + 원-핫 인코딩',
+   prompt:'<ol><li><code>df_na</code>의 <code>plan</code> 값 중 <code>\'Basic|Promo\'</code>는 <code>\'Basic\'</code>으로, <code>\'Standard|Promo\'</code>는 <code>\'Standard\'</code>로 바꾸세요.</li><li><code>plan, contract, region, gender</code> 컬럼을 원-핫 인코딩해 <code>df_preset</code>에 저장하세요.</li><li><code>df_preset</code>의 컬럼 수를 <code>답안7</code>에 저장하세요.</li></ol>',
+   hints:['<code>df.loc[조건, \'plan\'] = \'Basic\'</code>', '<code>pd.get_dummies(df_na, columns=[...])</code>'],
+   expl:'치환하지 않고 인코딩하면 <code>plan_Basic|Promo</code> 같은 컬럼이 따로 생겨 컬럼 수가 달라집니다.'},
+  {id:8, sec:'데이터 전처리', pts:6, type:'코드 작성', title:'학습/검증 데이터 분리',
+   prompt:'<code>df_preset</code>에서 <code>churn</code>을 <code>y</code>, 나머지를 <code>X</code>로 두고 분리하세요.<ul><li>변수: <code>X_train, X_valid, y_train, y_valid</code></li><li>검증 비율 25%, <code>random_state=11</code></li><li>레이블 비율 유지(<code>stratify</code>)</li></ul>',
+   hints:['<code>from sklearn.model_selection import train_test_split</code>', '반환 순서: X_train, X_valid, y_train, y_valid'],
+   expl:'분류 문제에서 <code>stratify=y</code>를 빼면 이탈 고객 비율이 달라져 결과가 바뀝니다.'},
+  {id:9, sec:'데이터 전처리', pts:6, type:'오류 정정', title:'스케일링',
+   prompt:'StandardScaler로 데이터를 표준화하는 코드에 잘못된 부분이 있습니다. 정정해 실행하세요. (<code>답안9</code>는 코드에 이미 있습니다)',
+   hints:['검증 데이터에도 기준을 새로 학습(fit)해야 할까요?'],
+   expl:'스케일러는 학습 데이터로만 <code>fit</code>하고, 검증 데이터에는 <code>transform</code>만 합니다. 이 함정은 실제 샘플 두 개에 모두 나옵니다.'},
+  {id:10, sec:'AI 모델링', pts:10, type:'코드 작성', title:'모델 학습 + 그리드서치',
+   prompt:'랜덤포레스트 분류 모델을 그리드서치로 튜닝하세요.<ul><li><code>RandomForestClassifier(random_state=7)</code></li><li>후보: <code>n_estimators</code> = [30, 60], <code>max_depth</code> = [4, 8]</li><li><code>GridSearchCV</code>: <code>cv=3</code>, <code>scoring=\'accuracy\'</code>, 객체 이름 <code>gs</code></li><li><code>X_train, y_train</code>으로 학습</li></ul><p class="small muted">브라우저에서 10~40초 걸릴 수 있습니다.</p>',
+   hints:['<code>GridSearchCV(rf, param_grid=params, cv=3, scoring=\'accuracy\')</code>', '<code>gs.fit(X_train, y_train)</code>'],
+   expl:'튜닝 결과 최적 모델은 <code>gs.best_estimator_</code>, 최적 조합은 <code>gs.best_params_</code>입니다.'},
+  {id:11, sec:'AI 모델링', pts:10, type:'오류 정정', title:'변수 중요도',
+   prompt:'최적 모델의 변수 중요도 상위 5개를 큰 순서로 뽑아 그래프로 그리는 코드입니다. 오류를 모두 정정해 실행하세요. 가장 중요한 변수 이름이 <code>답안11</code>에 저장됩니다.',
+   hints:['scikit-learn의 학습 결과 속성은 이름 끝에 밑줄(_)이 붙습니다.', '인덱스가 아니라 <b>값</b>으로 정렬해야 합니다.'],
+   expl:'<code>feature_importances_</code>, <code>sort_values(ascending=False)</code>. 오류 정정 문항은 API 이름 착각을 노립니다.'},
+  {id:12, sec:'AI 모델링', pts:10, type:'코드 작성', title:'성능 평가',
+   prompt:'그리드서치의 <b>최적 모델</b>로 <code>X_valid</code>를 예측하고 정확도(accuracy)를 구해 소수 넷째 자리까지 반올림해 <code>답안12</code>에 저장하세요.',
+   hints:['<code>from sklearn.metrics import accuracy_score</code>', '<code>accuracy_score(정답, 예측)</code>'],
+   expl:'튜닝 전 모델 <code>rf</code>는 학습되지 않았습니다. <code>gs.best_estimator_</code>(또는 <code>gs</code>)로 예측합니다.'},
+  {id:13, sec:'AI 모델링', pts:10, type:'코드 작성', title:'딥러닝 모델',
+   prompt:'다음 조건으로 딥러닝 모델을 만들고 학습하세요. <b>(브라우저에서는 실행하지 않고 코드 구조만 채점)</b><ul><li><code>Sequential</code> 모델: Dense 64(relu, 입력 차원 = X_train 컬럼 수) → Dropout 0.2 → Dense 32(relu) → Dense 1(sigmoid)</li><li><code>compile</code>: optimizer=\'adam\', loss=\'binary_crossentropy\', metrics=[\'accuracy\']</li><li><code>EarlyStopping</code>: monitor=\'val_loss\', patience=5, 객체 이름 <code>es</code></li><li><code>fit</code>: epochs=50, batch_size=32, validation_data=(X_valid, y_valid), callbacks=[es], 결과를 <code>history</code>에 저장</li></ul>',
+   hints:['<code>model.add(Dense(64, activation=\'relu\', input_dim=X_train.shape[1]))</code>', '<code>history = model.fit(...)</code>'],
+   expl:'시험지는 출력층·loss 조합을 지정해 줍니다. 교과서와 달라 보여도 <b>지시를 그대로</b> 따르세요. 실제 실행은 Colab에서 연습하세요.'},
+  {id:14, sec:'AI 모델링', pts:10, type:'빈칸', title:'학습 곡선',
+   prompt:'학습/검증 loss를 그래프로 그리려 합니다. 빈칸을 채워 실행하고 각 빈칸 내용을 <code>답안14_1</code>, <code>답안14_2</code>에 저장하세요. (앱이 학습 결과 <code>history</code>를 흉내 내 넣어 둡니다)',
+   hints:['fit이 돌려주는 객체의 기록은 <code>.history</code> 딕셔너리에 있습니다.', '선 이름표를 다는 함수입니다.'],
+   expl:'<code>history.history[\'val_loss\']</code>가 다시 오르기 시작하면 과적합 신호입니다.'},
+];
+
+const PLAN = [
+  {w:'1주차 · 파이썬·pandas 기초', items:['파이썬 자료형·리스트·딕셔너리·반복문 복습','read_csv, head, info, describe, shape 손에 익히기','불리언 인덱싱, loc, isin, value_counts','drop(axis, columns, index), reset_index','isnull().sum(), dropna, fillna']},
+  {w:'2주차 · 시각화·전처리', items:['countplot, histplot(hue), boxplot, jointplot, barplot 각 1번씩 그려보기','plt.subplots + ax=axes[i] + set_title','IQR 이상치 제거를 보지 않고 작성','get_dummies(columns=)와 범주 정리','train_test_split(test_size, random_state, stratify)','StandardScaler/RobustScaler: fit_transform vs transform']},
+  {w:'3주차 · 머신러닝·딥러닝', items:['DecisionTree / RandomForest (분류·회귀) 학습','GridSearchCV, best_estimator_, best_params_','feature_importances_ + sort_values + barplot','accuracy_score, mean_absolute_error 등 평가지표','Colab에서 Sequential·Dense·Dropout·EarlyStopping 실행','history.history로 학습 곡선 그리기']},
+  {w:'4주차 · 실전', items:['이 앱 모의고사 연습 모드로 1회','API 퀴즈 전부 맞히기','모의고사 시험 모드로 시간 재고 1회','공식 샘플문항(분류·회귀) 직접 풀기','틀린 문항만 다시 풀기','aice.study에서 시험 시간·허용 사이트·환경 확인']},
+];
+
+const CONCEPTS = [
+  {t:'데이터 읽기·탐색', code:"import pandas as pd\ndf = pd.read_csv('data.csv')\ndf.head(4); df.info(); df.describe()\ndf['col'].value_counts()", trap:'파일 경로·별칭은 지시 그대로.'},
+  {t:'seaborn 시각화', code:"sns.countplot(data=df, x='cat', hue='y')\nsns.histplot(data=df, x='num', hue='y')\nsns.boxplot(data=df, x='y', y='num')\nsns.jointplot(data=df, x='a', y='b')\nfig, axes = plt.subplots(1, 2, figsize=(12, 4))\nsns.boxplot(..., ax=axes[0]); axes[0].set_title('제목')", trap:'축 객체엔 set_title, plt엔 title.'},
+  {t:'이상치', code:"q1, q3 = df['c'].quantile([0.25, 0.75])\niqr = q3 - q1\ncond = (df['c'] < q1 - 1.5*iqr) | (df['c'] > q3 + 1.5*iqr)\ndf_temp = df.drop(df[cond].index).reset_index(drop=True)\n# 기준값 방식: df[df['speed'] >= 300].index", trap:'drop에는 데이터프레임이 아니라 .index를 넘긴다. 조건마다 괄호.'},
+  {t:'결측치·컬럼 삭제', code:"df = df.drop(columns=['id'])      # = drop(['id'], axis=1)\ndf.isnull().sum()\ndf_na = df.dropna()\ndf_na = df_na.reset_index(drop=True)", trap:'컬럼 삭제는 axis=1.'},
+  {t:'범주 정리·인코딩', code:"df.loc[df['c'].isin(['a', 'b']), 'c'] = 'etc'\ndf_preset = pd.get_dummies(df, columns=['c1', 'c2'])", trap:'pd.one_hot_encoding 같은 함수는 없다 → get_dummies.'},
+  {t:'데이터 분리', code:"from sklearn.model_selection import train_test_split\nX = df.drop('y', axis=1); y = df['y']\nX_train, X_valid, y_train, y_valid = train_test_split(\n    X, y, test_size=0.3, random_state=7, stratify=y)", trap:'반환 순서와 stratify(분류만).'},
+  {t:'스케일링', code:"from sklearn.preprocessing import StandardScaler  # RobustScaler, MinMaxScaler\nss = StandardScaler()\nX_train = ss.fit_transform(X_train)\nX_valid = ss.transform(X_valid)", trap:'검증 데이터에 fit_transform 금지 (단골 오류 정정).'},
+  {t:'머신러닝·튜닝', code:"from sklearn.tree import DecisionTreeClassifier   # ...Regressor\nfrom sklearn.ensemble import RandomForestClassifier\nfrom sklearn.model_selection import GridSearchCV\ndt = DecisionTreeClassifier(max_depth=5, random_state=120).fit(X_train, y_train)\ngs = GridSearchCV(RandomForestClassifier(random_state=7),\n                  {'n_estimators': [100, 200], 'max_depth': [5, 10]},\n                  cv=3, scoring='accuracy')\ngs.fit(X_train, y_train)\nbest = gs.best_estimator_", trap:'튜닝 후엔 best_estimator_로 예측.'},
+  {t:'변수 중요도', code:"imp = pd.Series(best.feature_importances_, index=X.columns)\ntop10 = imp.sort_values(ascending=False)[:10]\nsns.barplot(x=top10.values, y=top10.index)", trap:'feature_importances_ (끝 밑줄), sort_values.'},
+  {t:'평가지표', code:"from sklearn.metrics import accuracy_score, f1_score, mean_absolute_error, mean_squared_error, r2_score\ny_pred = best.predict(X_valid)\naccuracy_score(y_valid, y_pred)\nmean_absolute_error(y_valid, y_pred)", trap:'accuracy가 아니라 accuracy_score. X_train이 아니라 X_valid로 예측.'},
+  {t:'딥러닝 (분류/회귀)', code:"from tensorflow.keras.models import Sequential\nfrom tensorflow.keras.layers import Dense, Dropout\nfrom tensorflow.keras.callbacks import EarlyStopping\nmodel = Sequential()\nmodel.add(Dense(64, activation='relu', input_dim=X_train.shape[1]))\nmodel.add(Dropout(0.2))\nmodel.add(Dense(1, activation='sigmoid'))   # 회귀: Dense(1, activation='linear')\nmodel.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])\n# 회귀: loss='mean_squared_error', metrics=['mse']\nes = EarlyStopping(monitor='val_loss', patience=5)\nhistory = model.fit(X_train, y_train, epochs=50, batch_size=32,\n                    validation_data=(X_valid, y_valid), callbacks=[es])", trap:'출력층 2개 + to_categorical 조합이 나올 수도 있다. 지시 그대로 따를 것.'},
+  {t:'학습 곡선', code:"plt.plot(history.history['loss'])\nplt.plot(history.history['val_loss'])\nplt.title('Model Loss'); plt.xlabel('Epochs'); plt.ylabel('Loss')\nplt.legend(['train', 'valid']); plt.show()", trap:"history['loss']가 아니라 history.history['loss']."},
+];
+
+const QUIZ = [
+  {q:'검증 데이터 스케일링으로 옳은 것은?', o:['ss.fit_transform(X_valid)','ss.transform(X_valid)','ss.fit(X_valid)','ss.transform(X_train)'], a:1},
+  {q:'데이터프레임에서 컬럼 "id"를 삭제하는 코드는?', o:["df.drop('id', axis=0)","df.drop('id', axis=1)","df.remove('id')","df.del('id')"], a:1},
+  {q:'원-핫 인코딩을 하는 pandas 함수는?', o:['pd.one_hot_encoding','pd.get_dummies','pd.onehot','pd.encode'], a:1},
+  {q:'학습된 랜덤포레스트의 변수 중요도 속성은?', o:['rf.importances','rf.feature_importance','rf.feature_importances_','rf.importances_'], a:2},
+  {q:'변수 중요도를 값이 큰 순서로 정렬하려면?', o:['imp.sort_index(ascending=False)','imp.sort_values(ascending=False)','imp.sort(ascending=False)','imp.order()'], a:1},
+  {q:'정확도를 계산하는 sklearn 함수는?', o:['accuracy(y, p)','accuracy_score(y, p)','acc(y, p)','score_accuracy(y, p)'], a:1},
+  {q:'모델로 예측하는 메서드는?', o:['model.pred(X)','model.predict(X)','model.forecast(X)','model.infer(X)'], a:1},
+  {q:'GridSearchCV 후 최적 모델을 꺼내는 속성은?', o:['gs.best_model','gs.best_params_','gs.best_estimator_','gs.estimator'], a:2},
+  {q:'분류 문제에서 학습/검증 데이터의 레이블 비율을 같게 하는 옵션은?', o:['shuffle=y','stratify=y','balance=True','random_state=y'], a:1},
+  {q:'keras 학습 결과에서 검증 loss 기록은?', o:["history['val_loss']","history.history['val_loss']","history.val_loss()","model.history_['val_loss']"], a:1},
+  {q:'조건에 맞는 행을 drop하려면?', o:['df.drop(df[cond])','df.drop(df[cond].index)','df.drop(cond, axis=1)','df.remove(cond)'], a:1},
+  {q:'IQR 이상치 조건 두 개를 "또는"으로 묶을 때 올바른 것은?', o:["df['c'] < a or df['c'] > b","(df['c'] < a) | (df['c'] > b)","df['c'] < a | df['c'] > b","(df['c'] < a) & (df['c'] > b)"], a:1},
+  {q:'축(ax) 객체에 제목을 붙이는 메서드는?', o:['ax.title()','ax.set_title()','ax.settitle()','ax.name()'], a:1},
+  {q:'회귀 문제 평가지표가 아닌 것은?', o:['mean_absolute_error','mean_squared_error','accuracy_score','r2_score'], a:2},
+  {q:'EarlyStopping에서 개선이 없어도 기다리는 epoch 수를 정하는 인자는?', o:['wait','patience','epochs','tolerance'], a:1},
+  {q:'회귀 딥러닝의 출력층으로 알맞은 것은?', o:["Dense(1, activation='linear')","Dense(1, activation='sigmoid')","Dense(2, activation='softmax')","Dropout(1)"], a:0},
+  {q:'인덱스를 0부터 다시 매기고 기존 인덱스는 버리려면?', o:['reset_index()','reset_index(drop=True)','set_index(0)','reindex(drop=True)'], a:1},
+  {q:'컬럼별 결측치 개수를 확인하는 코드는?', o:['df.isnull().sum()','df.null().count()','df.isna()','df.dropna().sum()'], a:0},
+];
+
+// ------------------------------------------------------------------ 저장
+const KEY = 'aice-kit-v1';
+let S = {drafts:{}, results:{}, plan:{}, quiz:{}, examMode:false, startedAt:null, submitted:false, cur:1};
+try { Object.assign(S, JSON.parse(localStorage.getItem(KEY) || '{}')); } catch (e) {}
+const save = () => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} };
+const $ = (s, el = document) => el.querySelector(s);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const codeOf = (q, kind) => (document.querySelector(`script[data-q="${q}"][data-kind="${kind}"]`)?.textContent || '').replace(/^\n/, '').replace(/\s+$/, '') + '\n';
+
+// ------------------------------------------------------------------ 탭
+$('#tabs').addEventListener('click', e => {
+  const t = e.target.dataset.tab; if (!t) return;
+  document.querySelectorAll('#tabs button').forEach(b => b.classList.toggle('on', b.dataset.tab === t));
+  ['plan','concept','quiz','exam'].forEach(id => $('#tab-' + id).classList.toggle('hidden', id !== t));
+});
+
+// ------------------------------------------------------------------ 학습 계획
+function renderPlan() {
+  let total = 0, done = 0;
+  $('#plan').innerHTML = PLAN.map((wk, wi) => `<div><h3>${wk.w}</h3>${wk.items.map((it, ii) => {
+    const k = wi + '-' + ii; total++; if (S.plan[k]) done++;
+    return `<label class="check"><input type="checkbox" data-k="${k}" ${S.plan[k] ? 'checked' : ''}><span>${esc(it)}</span></label>`;
+  }).join('')}</div>`).join('');
+  $('#planbar').style.width = (done / total * 100) + '%';
+  $('#planpct').textContent = `${done}/${total} 완료`;
+}
+$('#plan').addEventListener('change', e => { S.plan[e.target.dataset.k] = e.target.checked; save(); renderPlan(); });
+
+// ------------------------------------------------------------------ 핵심 개념
+$('#tab-concept').innerHTML = `<div class="grid2">${CONCEPTS.map(c => `<div class="card"><h2>${c.t}</h2><pre>${esc(c.code)}</pre><div class="note">함정: ${esc(c.trap)}</div></div>`).join('')}</div>`;
+
+// ------------------------------------------------------------------ 퀴즈
+let quizOrder = [];
+function nextQuiz() {
+  if (!quizOrder.length) {
+    const wrong = QUIZ.map((_, i) => i).filter(i => S.quiz[i] !== true);
+    quizOrder = (wrong.length ? wrong : QUIZ.map((_, i) => i)).sort(() => Math.random() - .5);
+  }
+  const i = quizOrder.shift(), item = QUIZ[i];
+  $('#quizbox').innerHTML = `<p><b>Q.</b> ${esc(item.q)}</p>${item.o.map((o, j) => `<button class="quiz-opt" data-j="${j}"><code>${esc(o)}</code></button>`).join('')}<div class="row"><button class="btn hidden" id="quiznext">다음 문제</button></div>`;
+  $('#quizbox').querySelectorAll('.quiz-opt').forEach(b => b.onclick = () => {
+    const j = +b.dataset.j, ok = j === item.a;
+    S.quiz[i] = ok; save();
+    $('#quizbox').querySelectorAll('.quiz-opt').forEach(x => { x.disabled = true; if (+x.dataset.j === item.a) x.classList.add('ok'); });
+    if (!ok) b.classList.add('bad');
+    $('#quiznext').classList.remove('hidden'); $('#quiznext').onclick = nextQuiz; quizScore();
+  });
+  quizScore();
+}
+function quizScore() { $('#quizscore').textContent = `맞힌 문제 ${QUIZ.filter((_, i) => S.quiz[i] === true).length}/${QUIZ.length}`; }
+
+// ------------------------------------------------------------------ Python 엔진
+let py = null, busy = false;
+function setStatus(text, cls = '') { const el = $('#pystatus'); el.textContent = text; el.className = 'status ' + cls; }
+async function boot() {
+  try {
+    setStatus('Python 엔진 내려받는 중… (처음 1~2분)');
+    py = await loadPyodide({indexURL: 'https://cdn.jsdelivr.net/pyodide/v0.26.4/full/'});
+    setStatus('pandas·scikit-learn 설치 중…');
+    await py.loadPackage(['numpy', 'pandas', 'scikit-learn', 'matplotlib', 'micropip']);
+    setStatus('seaborn 설치 중…');
+    await py.pyimport('micropip').install('seaborn');
+    py.runPython($('#py-core').textContent);
+    const refs = {}; QUESTIONS.forEach(q => refs[q.id] = codeOf(q.id, 'ref'));
+    py.globals.get('api_init')(JSON.stringify(refs));
+    setStatus('Python 준비 완료', 'ready');
+    renderQ();
+    if (location.hash === '#selftest') {   // 자가 진단: 모범답안 14개가 모두 정답 처리되는지 확인
+      const bad = QUESTIONS.filter(q => !JSON.parse(py.globals.get('api_run')(q.id, codeOf(q.id, 'ref'))).correct).map(q => q.id);
+      py.globals.get('api_reset')();
+      setStatus(bad.length ? '자가 진단 실패: ' + bad.join(',') : '자가 진단 통과', bad.length ? 'err' : 'ready');
+    }
+  } catch (e) {
+    console.error(e); py = null;
+    setStatus('엔진 로드 실패 (인터넷 연결 확인 후 새로고침)', 'err');
+  }
+}
+const tick = () => new Promise(r => setTimeout(r, 30));
+
+// ------------------------------------------------------------------ 모의고사
+function dotClass(id) { const r = S.results[id]; if (!r) return ''; if (S.examMode && !S.submitted) return 'run'; return r.correct ? 'ok' : 'bad'; }
+function renderList() {
+  let sec = '';
+  $('#qlist').innerHTML = QUESTIONS.map(q => {
+    const head = q.sec !== sec ? `<div class="sec">${(sec = q.sec)}</div>` : '';
+    return head + `<button data-id="${q.id}" class="${q.id === S.cur ? 'on' : ''}"><span class="dot ${dotClass(q.id)}"></span>${q.id}. ${q.title}</button>`;
+  }).join('');
+}
+$('#qlist').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; S.cur = +b.dataset.id; save(); renderQ(); });
+
+function renderQ() {
+  renderList();
+  const q = QUESTIONS.find(x => x.id === S.cur);
+  const draft = S.drafts[q.id] ?? codeOf(q.id, 'starter');
+  const hide = S.examMode && !S.submitted;
+  $('#qview').innerHTML = `
+    <div><span class="tag">${q.sec}</span><span class="tag">${q.type}</span><span class="small muted">${q.pts}점</span></div>
+    <h2 style="margin-top:8px">${q.id}. ${q.title}</h2>
+    <div>${q.prompt}</div>
+    <textarea class="editor" id="ed" spellcheck="false">${esc(draft)}</textarea>
+    <div class="row">
+      <button class="btn primary" id="btn-run" ${py ? '' : 'disabled'}>▶ 실행 (Ctrl+Enter)</button>
+      <button class="btn" id="btn-sync" ${py ? '' : 'disabled'} title="1~${q.id - 1}번 모범답안을 실행한 상태로 변수를 맞춥니다">앞 문항 정답 상태로 맞추기</button>
+      <button class="btn" id="btn-starter">처음 코드로</button>
+      ${hide ? '' : '<button class="btn" id="btn-hint">힌트</button>'}
+      ${q.id > 1 ? '<button class="btn" id="btn-prev">← 이전</button>' : ''}${q.id < 14 ? '<button class="btn" id="btn-next">다음 →</button>' : ''}
+    </div>
+    <div id="hints"></div>
+    <div class="out" id="out">${py ? '' : '<p class="small muted">Python 엔진이 준비되면 실행할 수 있습니다.</p>'}</div>
+    ${hide ? '' : `<details style="margin-top:10px"><summary>해설과 모범답안 보기</summary><p class="small">${q.expl}</p><pre>${esc(codeOf(q.id, 'ref'))}</pre></details>`}`;
+  const ed = $('#ed');
+  ed.addEventListener('input', () => { S.drafts[q.id] = ed.value; save(); });
+  ed.addEventListener('keydown', e => {
+    if (e.key === 'Tab') { e.preventDefault(); const s = ed.selectionStart; ed.setRangeText('    ', s, ed.selectionEnd, 'end'); ed.dispatchEvent(new Event('input')); }
+    if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) { e.preventDefault(); run(q); }
+  });
+  $('#btn-run').onclick = () => run(q);
+  $('#btn-sync').onclick = () => sync(q);
+  $('#btn-starter').onclick = () => { if (confirm('작성한 코드를 지우고 처음 코드로 되돌릴까요?')) { delete S.drafts[q.id]; save(); renderQ(); } };
+  if ($('#btn-hint')) { let n = 0; $('#btn-hint').onclick = () => { if (n < q.hints.length) $('#hints').innerHTML += `<div class="note" style="margin:4px 0">힌트 ${n + 1}: ${q.hints[n++]}</div>`; }; }
+  if ($('#btn-prev')) $('#btn-prev').onclick = () => { S.cur--; save(); renderQ(); };
+  if ($('#btn-next')) $('#btn-next').onclick = () => { S.cur++; save(); renderQ(); };
+  if (S.results[q.id] && S.results[q.id].last) showResult(S.results[q.id].last, q);
+}
+
+async function run(q) {
+  if (!py || busy) return;
+  busy = true; $('#out').innerHTML = '<p class="small muted">실행 중…</p>'; $('#btn-run').disabled = true;
+  if (!S.startedAt) S.startedAt = Date.now();
+  await tick();
+  let res;
+  try { res = JSON.parse(py.globals.get('api_run')(q.id, $('#ed').value)); }
+  catch (e) { res = {stdout:'', figs:[], error: String(e.message || e).split('\n').slice(-3).join('\n'), correct:false, diffs:[]}; }
+  busy = false;
+  S.results[q.id] = {correct: res.correct, last: {...res, figs: []}}; save();
+  showResult(res, q); renderList();
+  $('#btn-run').disabled = false;
+}
+
+function fmt(v) { return v === null || v === undefined ? '(없음)' : typeof v === 'object' ? JSON.stringify(v) : String(v); }
+function showResult(res, q) {
+  const hide = S.examMode && !S.submitted;
+  let h = '';
+  if (res.note) h += `<div class="note">${esc(res.note)}</div>`;
+  if (res.stdout) h += `<pre>${esc(res.stdout)}</pre>`;
+  if (res.shown) h += `<pre>${esc(res.shown)}</pre>`;
+  (res.figs || []).forEach(f => h += `<img alt="그래프 출력" src="data:image/png;base64,${f}">`);
+  if (res.error) h += `<div class="err">${esc(res.error)}</div>`;
+  if (hide) h += `<p class="small muted">시험 모드: 결과는 최종 제출 후 공개됩니다.</p>`;
+  else if (res.correct) h += `<div class="verdict ok"><b>✔ 정답</b> (${q.pts}점)</div>`;
+  else h += `<div class="verdict bad"><b>✘ 아직 틀렸어요</b>
+      <table><tr><th>확인 항목</th><th>내 결과</th><th>기대 결과</th></tr>
+      ${res.diffs.map(d => `<tr><td>${esc(d.key)}</td><td><code>${esc(fmt(d.mine))}</code></td><td><code>${esc(fmt(d.expected))}</code></td></tr>`).join('')}</table>
+      <p class="small" style="margin:6px 0 0">코드를 고쳐 다시 실행했는데 값이 이상하면, 앞에서 변수가 이미 바뀌었을 수 있습니다. <b>앞 문항 정답 상태로 맞추기</b>를 누른 뒤 다시 실행하세요.</p></div>`;
+  $('#out').innerHTML = h;
+}
+
+async function sync(q) {
+  if (!py || busy) return;
+  busy = true; $('#out').innerHTML = `<p class="small muted">1~${q.id - 1}번 모범답안 실행 중…</p>`; await tick();
+  try { py.globals.get('api_sync')(q.id); $('#out').innerHTML = `<p class="small muted">1~${q.id - 1}번을 정답 상태로 맞췄습니다. 이제 ${q.id}번을 실행하세요.</p>`; }
+  catch (e) { $('#out').innerHTML = `<div class="err">${esc(e.message)}</div>`; }
+  busy = false;
+}
+
+$('#exammode').checked = !!S.examMode;
+$('#exammode').onchange = e => { S.examMode = e.target.checked; save(); renderQ(); };
+$('#btn-reset').onclick = () => {
+  if (!confirm('작성한 답안과 결과를 모두 지우고 새로 시작할까요?')) return;
+  S.drafts = {}; S.results = {}; S.submitted = false; S.startedAt = null; S.cur = 1; save();
+  if (py) py.globals.get('api_reset')();
+  $('#report').classList.add('hidden'); renderQ();
+};
+$('#btn-submit').onclick = () => {
+  if (!S.submitted && !confirm('최종 제출할까요? 마지막으로 실행한 결과로 채점합니다.')) return;
+  S.submitted = true; save(); renderReport(); renderQ();
+};
+function renderReport() {
+  const secs = {};
+  let total = 0;
+  QUESTIONS.forEach(q => { const s = secs[q.sec] ??= {got: 0, max: 0, wrong: []}; s.max += q.pts; if (S.results[q.id]?.correct) { s.got += q.pts; total += q.pts; } else s.wrong.push(q.id); });
+  const mins = S.startedAt ? Math.round((Date.now() - S.startedAt) / 60000) : 0;
+  $('#report').innerHTML = `<h2>결과 리포트</h2>
+    <div class="row"><span class="score">${total}</span><span class="muted">/ 100점 · 소요 약 ${mins}분 · ${total >= 80 ? '목표(80점) 달성!' : '목표 80점까지 ' + (80 - total) + '점'}</span></div>
+    <table><tr><th>영역</th><th>점수</th><th></th><th>틀린 문항</th></tr>
+    ${Object.entries(secs).map(([k, s]) => `<tr><td>${k}</td><td>${s.got}/${s.max}</td><td style="width:30%"><div class="bar"><i style="width:${s.got / s.max * 100}%"></i></div></td><td>${s.wrong.join(', ') || '-'}</td></tr>`).join('')}</table>
+    <p class="small muted">합격 기준은 공식 사이트에서 확인하세요. 틀린 문항은 왼쪽 목록에서 빨간 점으로 표시됩니다. 실행하지 않은 문항은 0점입니다.</p>`;
+  $('#report').classList.remove('hidden');
+}
+setInterval(() => {
+  if (!S.startedAt || S.submitted) { $('#timer').textContent = ''; return; }
+  const m = Math.floor((Date.now() - S.startedAt) / 60000);
+  $('#timer').textContent = `⏱ 경과 ${Math.floor(m / 60)}시간 ${m % 60}분`;
+}, 5000);
+
+// ------------------------------------------------------------------ 시작
+renderPlan(); nextQuiz(); renderQ();
+if (S.submitted) renderReport();
+boot();
+</script>
+</body>
+</html>
