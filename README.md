@@ -1,6 +1,6 @@
 # AICE Associate 독학 키트 (비공식)
 
-AICE Associate 시험을 혼자 준비하기 위한 브라우저용 학습 도구입니다. 설치 없이 `aice selfstudy.html`을 브라우저로 열면 됩니다. 처음 열 때 Python 엔진([Pyodide](https://pyodide.org))을 내려받는 데 20초쯤 걸립니다.
+AICE Associate 시험을 혼자 준비하기 위한 브라우저용 학습 도구입니다. **바로 쓰기: https://kangic98-tech.github.io/aice-selfstudy/** (설치 불필요, 내려받은 `index.html`을 브라우저로 열어도 됩니다.) 처음 열 때 Python 엔진([Pyodide](https://pyodide.org))을 내려받는 데 20초쯤 걸립니다.
 
 - **학습 계획**: 4주 체크리스트
 - **핵심 개념**: 단원별 핵심 코드와 자주 빠지는 함정
